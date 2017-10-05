@@ -19,34 +19,28 @@
  *
  */
 
-namespace OC\Remote\Api;
+namespace OC\Core\Command\Migrate;
 
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-use OCP\Http\Client\IClientService;
-use OCP\Remote\Api\IApiCollection;
-use OCP\Remote\ICredentials;
-use OCP\Remote\IInstance;
+class Migrate extends MigrateBase {
+	protected function configure() {
+		parent::configure();
 
-class ApiCollection implements IApiCollection {
-	private $instance;
-	private $credentials;
-	private $clientService;
-
-	public function __construct(IInstance $instance, ICredentials $credentials, IClientService $clientService) {
-		$this->instance = $instance;
-		$this->credentials = $credentials;
-		$this->clientService = $clientService;
+		$this
+			->setName('user-migrate:migrate')
+			->setDescription('Migrate a user from a remote server');
 	}
 
-	public function getCapabilitiesApi() {
-		return new OCS($this->instance, $this->credentials, $this->clientService);
-	}
-
-	public function getUserApi() {
-		return new OCS($this->instance, $this->credentials, $this->clientService);
-	}
-
-	public function getStorageApi() {
-
+	protected function execute(InputInterface $input, OutputInterface $output) {
+		if ($this->verifyInput($input, $output)) {
+			$this->loadPlugins();
+			$this->migrateManager->migrateFrom(
+				$this->getTargetUser($input),
+				$this->getInstance($input),
+				$this->getCredentials($input)
+			);
+		}
 	}
 }
