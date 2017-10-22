@@ -1,7 +1,6 @@
 # the default generated dir + db file
 /data
 /owncloud
-/config/config.php
 /config/*.config.php
 /config/mimetype*.json
 /config/mount.php
@@ -43,6 +42,7 @@
 
 # ignore themes except the example and the README
 /themes/*
+!/themes/ridon
 !/themes/example
 !/themes/README
 
